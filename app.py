@@ -20,10 +20,11 @@ class Face:
     landmarks: dict[str, list[float]]
 
 
-def identify_faces(image: Image) -> list[Face]:
+@st.cache_data
+def identify_faces(image: np.ndarray) -> list[Face]:
     return [
         Face(score=face["score"], bounding_box=face["facial_area"], landmarks=face["landmarks"])
-        for face in RetinaFace.detect_faces(np.array(image), model=model()).values()
+        for face in RetinaFace.detect_faces(image, model=model()).values()
     ]
 
 
@@ -70,7 +71,7 @@ highlight_faces = st.checkbox("Highlight identified faces")
 
 image = Image.open(uploaded_file)
 
-for face in identify_faces(image):
+for face in identify_faces(np.array(image)):
     if highlight_faces:
         draw_face(image, face)
     add_googly_eyes(image, face, eye_size, pupil_size_range)
