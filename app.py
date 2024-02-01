@@ -57,7 +57,7 @@ def add_googly_eyes(image: Image, face: Face, eye_size: float, pupil_size_range:
     plot_googly_eye(face.landmarks["left_eye"])
 
 
-st.title(":eyes: Goofy eyes")
+st.title(":eyes: Googly eyes")
 
 uploaded_file = st.file_uploader("Upload photo", type=["png", "jpg"])
 if uploaded_file is None:
