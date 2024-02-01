@@ -8,6 +8,7 @@ RUN apt-get update \
     direnv \
     git \
     expect \
+    libgl1-mesa-dev \
     && rm -rf /var/lib/apt/lists/*
 
 
