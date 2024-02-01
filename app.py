@@ -1,4 +1,5 @@
 import typing as t
+from io import BytesIO
 
 import numpy as np
 import streamlit as st
@@ -87,3 +88,10 @@ for face in identify_faces(np.array(image)):
         add_googly_eyes(image, face, eye_size, pupil_size_range)
 
 st.image(image)
+
+buf = BytesIO()
+image.save(buf, format=image.format)
+filename, ext = uploaded_file.name.split(".")
+st.download_button(
+    label="Download Image", data=buf.getvalue(), file_name=f"{filename}_googly_eyes.{ext}", mime=uploaded_file.type
+)
