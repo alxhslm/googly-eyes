@@ -65,15 +65,25 @@ if uploaded_file is None:
     st.error("No image uploaded")
     st.stop()
 
-eye_size = st.slider("Eye size", min_value=0.0, max_value=1.0, value=0.5)
-pupil_size_range = st.slider("Pupil size", min_value=0.0, max_value=1.0, value=[0.4, 0.6])
-highlight_faces = st.checkbox("Highlight identified faces")
+col1, col2 = st.columns(2)
+with col1:
+    googly_eyes_enabled = st.checkbox("Add googly eyes", value=True)
+with col2:
+    highlight_faces = st.checkbox("Highlight identified faces")
+
+with st.form("googly_eye_options"):
+    eye_size = st.slider("Eye size", min_value=0.0, max_value=1.0, value=0.5, disabled=not googly_eyes_enabled)
+    pupil_size_range = st.slider(
+        "Pupil size", min_value=0.0, max_value=1.0, value=[0.4, 0.6], disabled=not googly_eyes_enabled
+    )
+    st.form_submit_button("Update")
 
 image = Image.open(uploaded_file)
 
 for face in identify_faces(np.array(image)):
     if highlight_faces:
         draw_face(image, face)
-    add_googly_eyes(image, face, eye_size, pupil_size_range)
+    if googly_eyes_enabled:
+        add_googly_eyes(image, face, eye_size, pupil_size_range)
 
 st.image(image)
