@@ -6,12 +6,14 @@ import streamlit as st
 from attr import dataclass
 from keras.models import Model
 from PIL import Image, ImageDraw
+
 from retinaface import RetinaFace
+from retinaface.model import build_model
 
 
 @st.cache_resource
 def model() -> Model:
-    return RetinaFace.build_model()
+    return build_model()
 
 
 @dataclass
@@ -25,7 +27,7 @@ class Face:
 def identify_faces(image: np.ndarray) -> list[Face]:
     return [
         Face(score=face["score"], bounding_box=face["facial_area"], landmarks=face["landmarks"])
-        for face in RetinaFace.detect_faces(image, model=model()).values()
+        for face in RetinaFace.detect_faces(image, model=model())
     ]
 
 
