@@ -1,3 +1,4 @@
 .env
+.venv
 retinaface/weights/*
 __pycache__/

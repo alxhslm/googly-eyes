@@ -1,19 +1,14 @@
+import os
 import typing as t
 from io import BytesIO
 
 import numpy as np
+import requests
 import streamlit as st
-from attr import dataclass
-from keras.models import Model
 from PIL import Image, ImageDraw
 
-from retinaface import RetinaFace
-from retinaface.model import build_model
-
-
-@st.cache_resource
-def model() -> Model:
-    return build_model()
+URL = os.environ["SERVER_URL"]
+from dataclasses import dataclass
 
 
 @dataclass
@@ -21,14 +16,6 @@ class Face:
     score: float
     bounding_box: list[float]
     landmarks: dict[str, list[float]]
-
-
-@st.cache_data
-def identify_faces(image: np.ndarray) -> list[Face]:
-    return [
-        Face(score=face["score"], bounding_box=face["facial_area"], landmarks=face["landmarks"])
-        for face in RetinaFace.detect_faces(image, model=model())
-    ]
 
 
 def plot_circle(draw: ImageDraw, xy: t.Sequence[float], radius: float, **kwargs: t.Any) -> None:
@@ -83,17 +70,40 @@ with st.form("googly_eye_options"):
 
 image = Image.open(uploaded_file)
 
-for face in identify_faces(np.array(image)):
-    if highlight_faces:
-        draw_face(image, face)
-    if googly_eyes_enabled:
-        add_googly_eyes(image, face, eye_size, pupil_size_range)
+
+def save_image(image: Image) -> BytesIO:
+    buffer = BytesIO()
+    image.save(buffer, format=image.format)
+    buffer.seek(0)
+    return buffer
+
+
+def download_image(r: requests.Response) -> Image:
+    buffer = BytesIO()
+    buffer.write(r.content)
+    buffer.seek(0)
+    return Image.open(buffer)
+
+
+if googly_eyes_enabled:
+    files = {"image": save_image(image)}
+    settings = {"eye_size": eye_size, "pupil_size_range": pupil_size_range}
+    response = requests.post(f"{URL}/googly_eyes", files=files, data=settings)
+    response.raise_for_status()
+    image = download_image(response)
+
+
+if highlight_faces:
+    files = {"image": save_image(image)}
+    response = requests.post(f"{URL}/identify_faces", files=files)
+    response.raise_for_status()
+    for face in response.json():
+        draw_face(image, Face(**face))
 
 st.image(image)
 
-buf = BytesIO()
-image.save(buf, format=image.format)
+buffer = save_image(image)
 filename, ext = uploaded_file.name.split(".")
 st.download_button(
-    label="Download Image", data=buf.getvalue(), file_name=f"{filename}_googly_eyes.{ext}", mime=uploaded_file.type
+    label="Download Image", data=buffer.getvalue(), file_name=f"{filename}_googly_eyes.{ext}", mime=uploaded_file.type
 )
