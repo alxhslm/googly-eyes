@@ -1,8 +1,9 @@
 import typing as t
 
 import numpy as np
-from face import Face
 from PIL import Image, ImageDraw
+
+from common.face import Face
 
 
 def plot_circle(draw: ImageDraw, xy: t.Sequence[float], radius: float, **kwargs: t.Any) -> None:

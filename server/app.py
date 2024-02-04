@@ -1,11 +1,11 @@
 from io import BytesIO
 
 import numpy as np
-from drawing import add_googly_eyes
-from face import Face
 from flask import Flask, jsonify, request, send_file
 from PIL import Image
 
+from common.drawing import add_googly_eyes
+from common.face import Face
 from retinaface import RetinaFace
 from retinaface.model import build_model
 
