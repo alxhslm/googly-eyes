@@ -10,6 +10,9 @@ services:
         - SERVER_URL=http://server:8000
     ports:
       - "8501:8501"
+    volumes:
+      - ${LOCAL_WORKSPACE_FOLDER:-.}/dashboard:/app
+      - ${LOCAL_WORKSPACE_FOLDER:-.}/common:/app/common
     depends_on:
       - server
     command: poetry run streamlit run app.py --server.port 8501 --browser.serverAddress localhost --server.runOnSave True
@@ -18,6 +21,10 @@ services:
     build:
       context: .
       dockerfile: server/Dockerfile
+    volumes:
+      - ${LOCAL_WORKSPACE_FOLDER:-.}/server:/app
+      - ${LOCAL_WORKSPACE_FOLDER:-.}/common:/app/common
+      - ${LOCAL_WORKSPACE_FOLDER:-.}/retinaface:/app/retinaface
     command: poetry run gunicorn app:app --bind=0.0.0.0:8000 --reload
 
 networks:
