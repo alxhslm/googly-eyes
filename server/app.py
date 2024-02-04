@@ -1,21 +1,34 @@
 from io import BytesIO
 
 import numpy as np
+import tflite_runtime.interpreter as tflite
 from flask import Flask, jsonify, request, send_file
 from PIL import Image
 
 from common.drawing import add_googly_eyes
 from common.face import Face
 from retinaface import RetinaFace
-from retinaface.model import build_model
 
 app = Flask(__name__)
 
-MODEL = build_model()
+interpreter = tflite.Interpreter(model_path="model.tflite")
+output_names = [
+    "tf.compat.v1.transpose_1",
+    "face_rpn_bbox_pred_stride32",
+    "face_rpn_landmark_pred_stride32",
+    "tf.compat.v1.transpose_3",
+    "face_rpn_bbox_pred_stride16",
+    "face_rpn_landmark_pred_stride16",
+    "tf.compat.v1.transpose_5",
+    "face_rpn_bbox_pred_stride8",
+    "face_rpn_landmark_pred_stride8",
+]
 
 
 def model(X: np.ndarray) -> list[np.ndarray]:
-    return [o.numpy() for o in MODEL(X)]
+    model = interpreter.get_signature_runner("serving_default")
+    result = model(data=X)
+    return [result[o] for o in output_names]
 
 
 def _detect_faces(image: np.ndarray) -> list[Face]:

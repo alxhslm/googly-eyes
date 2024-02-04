@@ -2,3 +2,4 @@
 .venv
 retinaface/weights/*
 __pycache__/
+server/model.tflite
