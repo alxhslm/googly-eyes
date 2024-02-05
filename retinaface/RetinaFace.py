@@ -28,7 +28,7 @@ def transform(
 
 def detect_faces(
     img_path: str | np.ndarray,
-    model: Callable[[np.ndarray], np.ndarray],
+    model: Callable[[np.ndarray], list[np.ndarray]],
     threshold: float = 0.9,
     allow_upscaling: bool = True,
 ) -> list[dict[str, Any]]:
@@ -84,7 +84,6 @@ def detect_faces(
     landmarks_list = []
     im_tensor, im_shape, im_scale, im_offset = preprocess.preprocess_image(img, allow_upscaling)
     net_out = model(im_tensor)
-    net_out = [elt.numpy() for elt in net_out]
     sym_idx = 0
 
     for _, s in enumerate(_feat_stride_fpn):

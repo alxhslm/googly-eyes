@@ -11,7 +11,11 @@ from retinaface.model import build_model
 
 app = Flask(__name__)
 
-model = build_model()
+MODEL = build_model()
+
+
+def model(X: np.ndarray) -> list[np.ndarray]:
+    return [o.numpy() for o in MODEL(X)]
 
 
 def _detect_faces(image: np.ndarray) -> list[Face]:
