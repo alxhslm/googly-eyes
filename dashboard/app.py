@@ -1,5 +1,4 @@
 import os
-from io import BytesIO
 
 import requests
 import streamlit as st
@@ -7,22 +6,9 @@ from PIL import Image, ImageDraw
 
 from common.drawing import plot_circle
 from common.face import Face
+from common.image import get_image_from_bytes, put_image_into_buffer
 
 URL = os.environ.get("SERVER_URL", "http://localhost:8000")
-
-
-def _put_image_in_buffer(image: Image) -> BytesIO:
-    buffer = BytesIO()
-    image.save(buffer, format=image.format)
-    buffer.seek(0)
-    return buffer
-
-
-def _get_image_from_bytes(content: bytes) -> Image:
-    buffer = BytesIO()
-    buffer.write(content)
-    buffer.seek(0)
-    return Image.open(buffer)
 
 
 def _draw_face(image: Image, face: Face) -> None:
@@ -41,9 +27,7 @@ if uploaded_file is None:
 
 col1, col2 = st.columns(2)
 with col1:
-    googly_eyes_enabled = st.checkbox(
-        "Add googly eyes", value=True, help="Put google eyes on each face in the image"
-    )
+    googly_eyes_enabled = st.checkbox("Add googly eyes", value=True, help="Put google eyes on each face in the image")
 with col2:
     highlight_faces = st.checkbox(
         "Highlight identified faces",
@@ -73,15 +57,15 @@ image = Image.open(uploaded_file)
 
 
 if googly_eyes_enabled:
-    files = {"image": _put_image_in_buffer(image)}
+    files = {"image": put_image_into_buffer(image)}
     settings = {"eye_size": eye_size, "pupil_size_range": pupil_size_range}
     response = requests.post(f"{URL}/googly_eyes", files=files, data=settings)
     response.raise_for_status()
-    image = _get_image_from_bytes(response.content)
+    image = get_image_from_bytes(response.content)
 
 
 if highlight_faces:
-    files = {"image": _put_image_in_buffer(image)}
+    files = {"image": put_image_into_buffer(image)}
     response = requests.post(f"{URL}/identify_faces", files=files)
     response.raise_for_status()
     for face in response.json():
@@ -89,7 +73,7 @@ if highlight_faces:
 
 st.image(image)
 
-buffer = _put_image_in_buffer(image)
+buffer = put_image_into_buffer(image)
 filename, ext = uploaded_file.name.split(".")
 st.download_button(
     label="Download Image",

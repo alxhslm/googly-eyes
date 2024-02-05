@@ -1,6 +1,5 @@
 import os
 from dataclasses import asdict
-from io import BytesIO
 
 import numpy as np
 import tflite_runtime.interpreter as tflite
@@ -9,13 +8,12 @@ from PIL import Image
 
 from common.drawing import add_googly_eyes
 from common.face import Face
+from common.image import put_image_into_buffer
 from retinaface import detect
 
 app = Flask(__name__)
 
-interpreter = tflite.Interpreter(
-    model_path=os.path.join(os.path.dirname(detect.__file__), "retinaface.tflite")
-)
+interpreter = tflite.Interpreter(model_path=os.path.join(os.path.dirname(detect.__file__), "retinaface.tflite"))
 # We need this list of output names to ensure that the outputs from the tflite model are in the same order as the
 # original Keras model
 output_names = [
@@ -55,14 +53,9 @@ def googly_eyes():
     pupil_size_range = request.form.getlist("pupil_size_range", float)
     pupil_size_range = tuple(pupil_size_range) if pupil_size_range else (0.4, 0.6)
     for face in _detect_faces(np.array(image)):
-        add_googly_eyes(
-            image, face, eye_size=eye_size, pupil_size_range=pupil_size_range
-        )
+        add_googly_eyes(image, face, eye_size=eye_size, pupil_size_range=pupil_size_range)
 
-    buffer = BytesIO()
-    image.save(buffer, format=image.format)
-    buffer.seek(0)
-
+    buffer = put_image_into_buffer(image)
     return send_file(buffer, mimetype=request.files["image"].mimetype)
 
 
