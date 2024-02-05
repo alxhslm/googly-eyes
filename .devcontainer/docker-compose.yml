@@ -21,8 +21,6 @@ services:
     volumes:
       # Forwards the local Docker socket to the container.
       - /var/run/docker.sock:/var/run/docker-host.sock
-      # aws authentication
-      - ~/.aws:/home/vscode/.aws
       # Mount the code at /workspace
       - ..:/workspace:cached
       # Persistent caches for apt and pip
