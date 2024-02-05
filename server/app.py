@@ -49,4 +49,5 @@ def identify_faces():
     return jsonify([face.asdict() for face in _detect_faces(np.array(image))])
 
 
-app.run(port=8502)
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port="8502")
