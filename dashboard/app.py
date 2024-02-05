@@ -11,16 +11,16 @@ from common.face import Face
 URL = os.environ.get("SERVER_URL", "http://localhost:8000")
 
 
-def _save_image(image: Image) -> BytesIO:
+def _put_image_in_buffer(image: Image) -> BytesIO:
     buffer = BytesIO()
     image.save(buffer, format=image.format)
     buffer.seek(0)
     return buffer
 
 
-def _download_image(r: requests.Response) -> Image:
+def _get_image_from_bytes(content: bytes) -> Image:
     buffer = BytesIO()
-    buffer.write(r.content)
+    buffer.write(content)
     buffer.seek(0)
     return Image.open(buffer)
 
@@ -66,15 +66,15 @@ image = Image.open(uploaded_file)
 
 
 if googly_eyes_enabled:
-    files = {"image": _save_image(image)}
+    files = {"image": _put_image_in_buffer(image)}
     settings = {"eye_size": eye_size, "pupil_size_range": pupil_size_range}
     response = requests.post(f"{URL}/googly_eyes", files=files, data=settings)
     response.raise_for_status()
-    image = _download_image(response)
+    image = _get_image_from_bytes(response.content)
 
 
 if highlight_faces:
-    files = {"image": _save_image(image)}
+    files = {"image": _put_image_in_buffer(image)}
     response = requests.post(f"{URL}/identify_faces", files=files)
     response.raise_for_status()
     for face in response.json():
@@ -82,7 +82,7 @@ if highlight_faces:
 
 st.image(image)
 
-buffer = _save_image(image)
+buffer = _put_image_in_buffer(image)
 filename, ext = uploaded_file.name.split(".")
 st.download_button(
     label="Download Image",
