@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw
 from common.drawing import plot_circle
 from common.face import Face
 
-URL = os.environ["SERVER_URL"]
+URL = os.environ.get("SERVER_URL", "http://localhost:8000")
 
 
 def draw_face(image: Image, face: Face) -> None:
