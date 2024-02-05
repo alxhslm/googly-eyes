@@ -1,3 +1,4 @@
+import os
 from io import BytesIO
 
 import numpy as np
@@ -11,7 +12,7 @@ from retinaface import RetinaFace
 
 app = Flask(__name__)
 
-interpreter = tflite.Interpreter(model_path="model.tflite")
+interpreter = tflite.Interpreter(model_path=os.path.join(os.path.dirname(RetinaFace.__file__), "retinaface.tflite"))
 output_names = [
     "tf.compat.v1.transpose_1",
     "face_rpn_bbox_pred_stride32",

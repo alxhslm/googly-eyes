@@ -10,9 +10,9 @@ We then overlay Googly eyes with a random pupil size and orientation using [Pill
 
 ## Usage
 1. Install Docker on your machine
-2. Download the weights by running the following:
+2. Download the pre-trained model by running the following:
     ```
-    wget https://github.com/serengil/deepface_models/releases/download/v1.0/retinaface.h5 -O retinaface/retinaface.h5
+    wget https://github.com/alxhslm/googly-eyes/releases/download/v1.0/retinaface.tflite -O retinaface/retinaface.tflite
     ```
 3. Run the following:
     ```

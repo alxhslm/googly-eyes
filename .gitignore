@@ -1,5 +1,5 @@
 .env
 .venv
 retinaface/retinaface.h5
+retinaface/retinaface.tflite
 __pycache__/
-server/model.tflite

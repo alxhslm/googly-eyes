@@ -11,7 +11,6 @@ RUN poetry install
 
 # Copy any python files and the model we had to the working directory of Docker
 COPY server/app.py ./
-COPY server/model.tflite ./
 COPY common ./common
 COPY retinaface ./retinaface
 

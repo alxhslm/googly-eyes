@@ -12,5 +12,5 @@ converter.target_spec.supported_ops = [
 tflite_model = converter.convert()
 
 # Save the model.
-with open("server/model.tflite", "wb") as f:
+with open("retinaface/retinaface.tflite", "wb") as f:
     f.write(tflite_model)
