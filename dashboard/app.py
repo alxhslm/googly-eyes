@@ -41,9 +41,14 @@ if uploaded_file is None:
 
 col1, col2 = st.columns(2)
 with col1:
-    googly_eyes_enabled = st.checkbox("Add googly eyes", value=True)
+    googly_eyes_enabled = st.checkbox(
+        "Add googly eyes", value=True, help="Put google eyes on each face in the image"
+    )
 with col2:
-    highlight_faces = st.checkbox("Highlight identified faces")
+    highlight_faces = st.checkbox(
+        "Highlight identified faces",
+        help="Adding bounding boxes around identifed faces",
+    )
 
 with st.form("googly_eye_options"):
     eye_size = st.slider(
@@ -52,6 +57,7 @@ with st.form("googly_eye_options"):
         max_value=1.0,
         value=0.5,
         disabled=not googly_eyes_enabled,
+        help="Eye radius relative to eye-to-eye distance",
     )
     pupil_size_range = st.slider(
         "Pupil size",
@@ -59,6 +65,7 @@ with st.form("googly_eye_options"):
         max_value=1.0,
         value=[0.4, 0.6],
         disabled=not googly_eyes_enabled,
+        help="Pupil radius relative to eye radius",
     )
     st.form_submit_button("Update")
 
@@ -89,4 +96,5 @@ st.download_button(
     data=buffer.getvalue(),
     file_name=f"{filename}_googly_eyes.{ext}",
     mime=uploaded_file.type,
+    help="Download modified image",
 )
