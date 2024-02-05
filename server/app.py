@@ -12,7 +12,11 @@ from retinaface import detect
 
 app = Flask(__name__)
 
-interpreter = tflite.Interpreter(model_path=os.path.join(os.path.dirname(detect.__file__), "retinaface.tflite"))
+interpreter = tflite.Interpreter(
+    model_path=os.path.join(os.path.dirname(detect.__file__), "retinaface.tflite")
+)
+# We need this list of output names to ensure that the outputs from the tflite model are in the same order as the
+# original Keras model
 output_names = [
     "tf.compat.v1.transpose_1",
     "face_rpn_bbox_pred_stride32",
