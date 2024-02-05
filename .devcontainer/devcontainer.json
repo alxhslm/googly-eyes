@@ -3,6 +3,9 @@
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "devcontainer",
 	"workspaceFolder": "/workspace",
+	"remoteEnv": {
+		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
+	},
 	"customizations": {
 		"vscode": {
 			// Set *default* container specific settings.json values on container create.

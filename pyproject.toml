@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "hand-writing-generation"
+name = "googly-eyes"
 version = "0.1.0"
 description = ""
 authors = ["Alex Haslam <alexhaslam12@gmail.com>"]
@@ -11,12 +11,11 @@ priority = "primary"
 [tool.poetry.dependencies]
 python = "~3.11"
 numpy  = "1.23.5"
-tensorflow = "^2.15.0"
 mypy = "~1.0.0"
 pre-commit = "2.20.0"
-streamlit = "1.25.0"
 aws-requests-auth = "^0.4.3"
 pillow = "9.5.0"
+requests = "^2.31.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -1,12 +1,10 @@
 import os
 import warnings
-from typing import Any
+from typing import Any, Callable
 
 import numpy as np
-from tensorflow.keras.models import Model
 
 from retinaface.commons import postprocess, preprocess
-from retinaface.model import build_model
 
 # ---------------------------
 
@@ -21,8 +19,8 @@ os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
 
 def detect_faces(
     img_path: str | np.ndarray,
+    model: Callable[[np.ndarray], np.ndarray],
     threshold: float = 0.9,
-    model: Model | None = None,
     allow_upscaling: bool = True,
 ) -> list[dict[str, Any]]:
     """
@@ -52,8 +50,8 @@ def detect_faces(
 
     # ---------------------------
 
-    if model is None:
-        model = build_model()
+    # if model is None:
+    #     model = build_model()
 
     # ---------------------------
 
