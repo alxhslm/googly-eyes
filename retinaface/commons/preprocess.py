@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageOps
 
 
 def get_image(img_uri: str | np.ndarray) -> np.ndarray:
@@ -41,42 +41,38 @@ def get_image(img_uri: str | np.ndarray) -> np.ndarray:
     return img
 
 
-def resize_image(img: np.ndarray, target_size: int, max_size: int, allow_upscaling: bool) -> tuple[np.ndarray, float]:
+def resize_image(
+    img: np.ndarray, target_size: tuple[int, int], allow_upscaling: bool
+) -> tuple[np.ndarray, float, tuple[float, float]]:
     """
     This function is modified from the following code snippet:
     https://github.com/StanislasBertrand/RetinaFace-tf2/blob/5f68ce8130889384cb8aca937a270cea4ef2d020/retinaface.py#L49-L74
 
     Args:
         img (numpy array): given image
-        target_size: int
         max_size: int
         allow_upscaling (bool)
     Returns
         resized image, im_scale
     """
     img_h, img_w = img.shape[0:2]
+    im_scale = (target_size[0] / float(img.shape[0]), target_size[1] / float(img.shape[1]))
 
-    if img_w > img_h:
-        im_size_min, im_size_max = img_h, img_w
+    if im_scale[0] < im_scale[1]:
+        im_offset = ((img_h - img_w) / 2, 0.0)
     else:
-        im_size_min, im_size_max = img_w, img_h
+        im_offset = (0.0, (img_w - img_h) / 2)
 
-    im_scale = target_size / float(im_size_min)
-    if not allow_upscaling:
-        im_scale = min(1.0, im_scale)
+    im = Image.fromarray(img)
+    im = ImageOps.pad(im, size=target_size, method=Image.Resampling.BILINEAR)
+    img = np.array(im)
 
-    if np.round(im_scale * im_size_max) > max_size:
-        im_scale = max_size / float(im_size_max)
-
-    if im_scale != 1.0:
-        im = Image.fromarray(img)
-        im = im.resize(size=(int(im_scale * img_w), int(im_scale * img_h)), resample=Image.Resampling.BILINEAR)
-        img = np.array(im)
-
-    return img, im_scale
+    return img, min(im_scale), im_offset
 
 
-def preprocess_image(img: np.ndarray, allow_upscaling: bool) -> tuple[np.ndarray, tuple[int, int], float]:
+def preprocess_image(
+    img: np.ndarray, allow_upscaling: bool
+) -> tuple[np.ndarray, tuple[int, int], float, tuple[float, float]]:
     """
     This function is modified from the following code snippet:
     https://github.com/StanislasBertrand/RetinaFace-tf2/blob/5f68ce8130889384cb8aca937a270cea4ef2d020/retinaface.py#L76-L96
@@ -90,7 +86,7 @@ def preprocess_image(img: np.ndarray, allow_upscaling: bool) -> tuple[np.ndarray
     pixel_stds = np.array([1.0, 1.0, 1.0], dtype=np.float32)
     pixel_scale = float(1.0)
 
-    img, im_scale = resize_image(img, target_size=1024, max_size=1980, allow_upscaling=allow_upscaling)
+    img, im_scale, im_offset = resize_image(img, target_size=(1024, 1024), allow_upscaling=allow_upscaling)
     img = img.astype(np.float32)
     im_tensor = np.zeros((1, img.shape[0], img.shape[1], img.shape[2]), dtype=np.float32)
     im_shape = (img.shape[0], img.shape[1])
@@ -99,4 +95,4 @@ def preprocess_image(img: np.ndarray, allow_upscaling: bool) -> tuple[np.ndarray
     for i in range(3):
         im_tensor[0, :, :, i] = (img[:, :, i] / pixel_scale - pixel_means[i]) / pixel_stds[i]
 
-    return im_tensor, im_shape, im_scale
+    return im_tensor, im_shape, im_scale, im_offset

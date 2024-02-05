@@ -17,6 +17,15 @@ os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
 # ---------------------------
 
 
+def transform(
+    x: np.ndarray,
+    y: np.ndarray,
+    im_scale: float,
+    im_offset: tuple[float, float],
+) -> tuple[np.ndarray, np.ndarray]:
+    return (x / im_scale) - im_offset[0], (y / im_scale) - im_offset[1]
+
+
 def detect_faces(
     img_path: str | np.ndarray,
     model: Callable[[np.ndarray], np.ndarray],
@@ -73,7 +82,7 @@ def detect_faces(
     proposals_list = []
     scores_list = []
     landmarks_list = []
-    im_tensor, im_info, im_scale = preprocess.preprocess_image(img, allow_upscaling)
+    im_tensor, im_shape, im_scale, im_offset = preprocess.preprocess_image(img, allow_upscaling)
     net_out = model(im_tensor)
     net_out = [elt.numpy() for elt in net_out]
     sym_idx = 0
@@ -102,7 +111,7 @@ def detect_faces(
         bbox_deltas[:, 3::4] = bbox_deltas[:, 3::4] * bbox_stds[3]
         proposals = postprocess.bbox_pred(anchors, bbox_deltas)
 
-        proposals = postprocess.clip_boxes(proposals, im_info[:2])
+        proposals = postprocess.clip_boxes(proposals, im_shape)
 
         if s == 4 and decay4 < 1.0:
             scores *= decay4
@@ -112,7 +121,8 @@ def detect_faces(
         proposals = proposals[order, :]
         scores = scores[order]
 
-        proposals[:, 0:4] /= im_scale
+        proposals[:, 0], proposals[:, 1] = transform(proposals[:, 0], proposals[:, 1], im_scale, im_offset)
+        proposals[:, 2], proposals[:, 3] = transform(proposals[:, 2], proposals[:, 3], im_scale, im_offset)
         proposals_list.append(proposals)
         scores_list.append(scores)
 
@@ -122,7 +132,7 @@ def detect_faces(
         landmarks = postprocess.landmark_pred(anchors, landmark_deltas)
         landmarks = landmarks[order, :]
 
-        landmarks[:, :, 0:2] /= im_scale
+        landmarks[:, :, 0], landmarks[:, :, 1] = transform(landmarks[:, :, 0], landmarks[:, :, 1], im_scale, im_offset)
         landmarks_list.append(landmarks)
         sym_idx += 3
 

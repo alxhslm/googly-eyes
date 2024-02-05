@@ -16,13 +16,14 @@ from tensorflow.keras.layers import (
 from tensorflow.keras.models import Model
 
 WEIGHTS_FILE = os.path.join(os.path.dirname(__file__), "weights", "retinaface.h5")
+IMAGE_SIZE = 1024
 
 
 def build_model(weights_file: str = WEIGHTS_FILE) -> Model:
     """
     Build RetinaFace model
     """
-    data = Input(dtype=tf.float32, shape=(None, None, 3), name="data")
+    data = Input(dtype=tf.float32, shape=(IMAGE_SIZE, IMAGE_SIZE, 3), name="data")
 
     bn_data = BatchNormalization(epsilon=1.9999999494757503e-05, name="bn_data", trainable=False)(data)
 

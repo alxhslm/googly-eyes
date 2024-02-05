@@ -83,7 +83,7 @@ def landmark_pred(boxes: np.ndarray, landmark_deltas: np.ndarray) -> np.ndarray:
     return pred
 
 
-def clip_boxes(boxes: np.ndarray, im_shape: np.ndarray) -> np.ndarray:
+def clip_boxes(boxes: np.ndarray, im_shape: tuple[int, int]) -> np.ndarray:
     """
     This function copied from rcnn module of retinaface-tf2 project
     https://github.com/StanislasBertrand/RetinaFace-tf2/blob/master/rcnn/processing/bbox_transform.py
