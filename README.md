@@ -10,9 +10,13 @@ We then overlay Googly eyes with a random pupil size and orientation using [Pill
 
 ## Usage
 1. Install Docker on your machine
-2. Run the following:
+2. Download the weights by running the following:
+    ```
+    wget https://github.com/serengil/deepface_models/releases/download/v1.0/retinaface.h5 -O retinaface/retinaface.h5
+    ```
+3. Run the following:
     ```
     docker compose up dashboard
     ```
     which will build and launch the Flask server and Streamlit dashboard, each in a separate container.
-3. View the Streamlit dashboard in your browser by navigating to http://localhost:8501/.
+4. View the Streamlit dashboard in your browser by navigating to http://localhost:8501/.
