@@ -26,7 +26,7 @@ output_names = [
 ]
 
 
-def model(X: np.ndarray) -> list[np.ndarray]:
+def _model(X: np.ndarray) -> list[np.ndarray]:
     model = interpreter.get_signature_runner("serving_default")
     result = model(data=X)
     return [result[o] for o in output_names]
@@ -39,7 +39,7 @@ def _detect_faces(image: np.ndarray) -> list[Face]:
             bounding_box=face["facial_area"],
             landmarks=face["landmarks"],
         )
-        for face in detect.detect_faces(image, model=model)
+        for face in detect.detect_faces(image, model=_model)
     ]
 
 

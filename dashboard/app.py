@@ -11,7 +11,21 @@ from common.face import Face
 URL = os.environ.get("SERVER_URL", "http://localhost:8000")
 
 
-def draw_face(image: Image, face: Face) -> None:
+def _save_image(image: Image) -> BytesIO:
+    buffer = BytesIO()
+    image.save(buffer, format=image.format)
+    buffer.seek(0)
+    return buffer
+
+
+def _download_image(r: requests.Response) -> Image:
+    buffer = BytesIO()
+    buffer.write(r.content)
+    buffer.seek(0)
+    return Image.open(buffer)
+
+
+def _draw_face(image: Image, face: Face) -> None:
     draw = ImageDraw.Draw(image)
     draw.rectangle(face.bounding_box, width=10, outline=(255, 0, 0, 0))
     plot_circle(draw, face.landmarks["right_eye"], radius=10, fill=(255, 0, 0, 0))
@@ -51,38 +65,24 @@ with st.form("googly_eye_options"):
 image = Image.open(uploaded_file)
 
 
-def save_image(image: Image) -> BytesIO:
-    buffer = BytesIO()
-    image.save(buffer, format=image.format)
-    buffer.seek(0)
-    return buffer
-
-
-def download_image(r: requests.Response) -> Image:
-    buffer = BytesIO()
-    buffer.write(r.content)
-    buffer.seek(0)
-    return Image.open(buffer)
-
-
 if googly_eyes_enabled:
-    files = {"image": save_image(image)}
+    files = {"image": _save_image(image)}
     settings = {"eye_size": eye_size, "pupil_size_range": pupil_size_range}
     response = requests.post(f"{URL}/googly_eyes", files=files, data=settings)
     response.raise_for_status()
-    image = download_image(response)
+    image = _download_image(response)
 
 
 if highlight_faces:
-    files = {"image": save_image(image)}
+    files = {"image": _save_image(image)}
     response = requests.post(f"{URL}/identify_faces", files=files)
     response.raise_for_status()
     for face in response.json():
-        draw_face(image, Face(**face))
+        _draw_face(image, Face(**face))
 
 st.image(image)
 
-buffer = save_image(image)
+buffer = _save_image(image)
 filename, ext = uploaded_file.name.split(".")
 st.download_button(
     label="Download Image",
