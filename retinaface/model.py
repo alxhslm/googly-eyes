@@ -15,7 +15,7 @@ from tensorflow.keras.layers import (
 )
 from tensorflow.keras.models import Model
 
-WEIGHTS_FILE = os.path.join(os.path.dirname(__file__), "weights", "retinaface.h5")
+WEIGHTS_FILE = os.path.join(os.path.dirname(__file__), "retinaface.h5")
 IMAGE_SIZE = 1024
 
 
