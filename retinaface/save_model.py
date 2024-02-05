@@ -1,4 +1,6 @@
 # Convert the model
+import os
+
 import tensorflow as tf
 
 from retinaface.model import build_model
@@ -12,5 +14,5 @@ converter.target_spec.supported_ops = [
 tflite_model = converter.convert()
 
 # Save the model.
-with open("retinaface/retinaface.tflite", "wb") as f:
+with open(os.path.join(os.path.dirname(__file__), "retinaface.tflite"), "wb") as f:
     f.write(tflite_model)
