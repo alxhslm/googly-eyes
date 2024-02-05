@@ -157,3 +157,12 @@ def cpu_nms(dets: np.ndarray, threshold: float) -> list[int]:
                 suppressed[j] = 1
 
     return keep
+
+
+def transform_bbox(
+    x: np.ndarray,
+    y: np.ndarray,
+    im_scale: float,
+    im_offset: tuple[float, float],
+) -> tuple[np.ndarray, np.ndarray]:
+    return (x / im_scale) - im_offset[0], (y / im_scale) - im_offset[1]

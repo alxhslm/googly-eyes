@@ -17,15 +17,6 @@ os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"
 # ---------------------------
 
 
-def transform(
-    x: np.ndarray,
-    y: np.ndarray,
-    im_scale: float,
-    im_offset: tuple[float, float],
-) -> tuple[np.ndarray, np.ndarray]:
-    return (x / im_scale) - im_offset[0], (y / im_scale) - im_offset[1]
-
-
 def detect_faces(
     img_path: str | np.ndarray,
     model: Callable[[np.ndarray], list[np.ndarray]],
@@ -120,8 +111,12 @@ def detect_faces(
         proposals = proposals[order, :]
         scores = scores[order]
 
-        proposals[:, 0], proposals[:, 1] = transform(proposals[:, 0], proposals[:, 1], im_scale, im_offset)
-        proposals[:, 2], proposals[:, 3] = transform(proposals[:, 2], proposals[:, 3], im_scale, im_offset)
+        proposals[:, 0], proposals[:, 1] = postprocess.transform_bbox(
+            proposals[:, 0], proposals[:, 1], im_scale, im_offset
+        )
+        proposals[:, 2], proposals[:, 3] = postprocess.transform_bbox(
+            proposals[:, 2], proposals[:, 3], im_scale, im_offset
+        )
         proposals_list.append(proposals)
         scores_list.append(scores)
 
@@ -131,7 +126,9 @@ def detect_faces(
         landmarks = postprocess.landmark_pred(anchors, landmark_deltas)
         landmarks = landmarks[order, :]
 
-        landmarks[:, :, 0], landmarks[:, :, 1] = transform(landmarks[:, :, 0], landmarks[:, :, 1], im_scale, im_offset)
+        landmarks[:, :, 0], landmarks[:, :, 1] = postprocess.transform_bbox(
+            landmarks[:, :, 0], landmarks[:, :, 1], im_scale, im_offset
+        )
         landmarks_list.append(landmarks)
         sym_idx += 3
 
