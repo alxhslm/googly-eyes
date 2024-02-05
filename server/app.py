@@ -8,11 +8,11 @@ from PIL import Image
 
 from common.drawing import add_googly_eyes
 from common.face import Face
-from retinaface import RetinaFace
+from retinaface import detect
 
 app = Flask(__name__)
 
-interpreter = tflite.Interpreter(model_path=os.path.join(os.path.dirname(RetinaFace.__file__), "retinaface.tflite"))
+interpreter = tflite.Interpreter(model_path=os.path.join(os.path.dirname(detect.__file__), "retinaface.tflite"))
 output_names = [
     "tf.compat.v1.transpose_1",
     "face_rpn_bbox_pred_stride32",
@@ -39,7 +39,7 @@ def _detect_faces(image: np.ndarray) -> list[Face]:
             bounding_box=face["facial_area"],
             landmarks=face["landmarks"],
         )
-        for face in RetinaFace.detect_faces(image, model=model)
+        for face in detect.detect_faces(image, model=model)
     ]
 
 
