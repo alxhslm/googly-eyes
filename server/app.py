@@ -1,4 +1,5 @@
 import os
+from dataclasses import asdict
 from io import BytesIO
 
 import numpy as np
@@ -12,9 +13,7 @@ from retinaface import detect
 
 app = Flask(__name__)
 
-interpreter = tflite.Interpreter(
-    model_path=os.path.join(os.path.dirname(detect.__file__), "retinaface.tflite")
-)
+interpreter = tflite.Interpreter(model_path=os.path.join(os.path.dirname(detect.__file__), "retinaface.tflite"))
 # We need this list of output names to ensure that the outputs from the tflite model are in the same order as the
 # original Keras model
 output_names = [
@@ -68,7 +67,7 @@ def googly_eyes():
 @app.route("/identify_faces", methods=["POST"])
 def identify_faces():
     image = Image.open(request.files["image"])
-    return jsonify([face.asdict() for face in _detect_faces(np.array(image))])
+    return jsonify([asdict(face) for face in _detect_faces(np.array(image))])
 
 
 if __name__ == "__main__":

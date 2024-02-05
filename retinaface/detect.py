@@ -156,14 +156,14 @@ def detect_faces(
 
     return [
         {
-            "score": face[4],
-            "facial_area": list(face[0:4].astype(int)),
+            "score": float(face[4]),
+            "facial_area": face[0:4].astype(int).tolist(),
             "landmarks": {
-                "right_eye": list(landmarks[idx][0]),
-                "left_eye": list(landmarks[idx][1]),
-                "nose": list(landmarks[idx][2]),
-                "mouth_right": list(landmarks[idx][3]),
-                "mouth_left": list(landmarks[idx][4]),
+                "right_eye": landmarks[idx][0].tolist(),
+                "left_eye": landmarks[idx][1].tolist(),
+                "nose": landmarks[idx][2].tolist(),
+                "mouth_right": landmarks[idx][3].tolist(),
+                "mouth_left": landmarks[idx][4].tolist(),
             },
         }
         for idx, face in enumerate(det)
