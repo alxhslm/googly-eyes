@@ -14,7 +14,8 @@ numpy = "1.23.5"
 tflite-runtime = "^2.14.0"
 pillow = "~10"
 flask = "^3.0.1"
-gunicorn = "^21.2.0"
+waitress = "^3.0.0"
+hupper = "^1.12.1"
 
 
 [build-system]

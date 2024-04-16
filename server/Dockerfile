@@ -18,4 +18,4 @@ COPY retinaface ./retinaface
 EXPOSE 8000
 
 # Launch the server
-CMD ["poetry", "run", "gunicorn", "app:app" "--bind", "0.0.0.0:8000"]
+CMD ["poetry", "run", "waitress-serve", "--host=0.0.0.0" "port=8000", "app:app"]
