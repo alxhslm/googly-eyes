@@ -1,15 +1,15 @@
+import base64
 import os
 from dataclasses import asdict
 
 import numpy as np
 import tflite_runtime.interpreter as tflite
-from flask import Flask, jsonify, request, send_file
-from PIL import Image
+from flask import Flask, jsonify, request
 
 from common.drawing import add_googly_eyes
 from common.face import Face
-from common.image import put_image_into_buffer
 from retinaface import detect
+from common.image import put_image_into_buffer, get_image_from_bytes
 
 app = Flask(__name__)
 
@@ -35,7 +35,7 @@ def _model(X: np.ndarray) -> list[np.ndarray]:
     return [result[o] for o in output_names]
 
 
-def _detect_faces(image: np.ndarray) -> list[Face]:
+def detect_faces(image: np.ndarray) -> list[Face]:
     return [
         Face(
             score=face["score"],
@@ -48,21 +48,18 @@ def _detect_faces(image: np.ndarray) -> list[Face]:
 
 @app.route("/googly_eyes", methods=["POST"])
 def googly_eyes():
-    image = Image.open(request.files["image"])
+    image = get_image_from_bytes(base64.b64decode(request.form.get("image").encode("utf-8")))
     eye_size = request.form.get("eye_size", default=0.5, type=float)
     pupil_size_range = request.form.getlist("pupil_size_range", float)
     pupil_size_range = tuple(pupil_size_range) if pupil_size_range else (0.4, 0.6)
-    for face in _detect_faces(np.array(image)):
+    for face in detect_faces(np.array(image)):
         add_googly_eyes(image, face, eye_size=eye_size, pupil_size_range=pupil_size_range)
-
-    buffer = put_image_into_buffer(image)
-    return send_file(buffer, mimetype=request.files["image"].mimetype)
-
-
-@app.route("/identify_faces", methods=["POST"])
-def identify_faces():
-    image = Image.open(request.files["image"])
-    return jsonify([asdict(face) for face in _detect_faces(np.array(image))])
+    return jsonify(
+        {
+            "image": base64.b64encode(put_image_into_buffer(image).read()).decode("utf-8"),
+            "faces": [asdict(face) for face in detect_faces(np.array(image))],
+        }
+    )
 
 
 if __name__ == "__main__":

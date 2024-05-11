@@ -1,3 +1,4 @@
+import base64
 import os
 
 import requests
@@ -55,20 +56,21 @@ with st.form("googly_eye_options"):
 
 image = Image.open(uploaded_file)
 
+body = {
+    "image": base64.b64encode(put_image_into_buffer(image).read()).decode("utf-8"),
+    "eye_size": eye_size,
+    "pupil_size_range": pupil_size_range,
+}
+response = requests.post(f"{URL}/googly_eyes", data=body)
+response.raise_for_status()
+data = response.json()
 
 if googly_eyes_enabled:
-    files = {"image": put_image_into_buffer(image)}
-    settings = {"eye_size": eye_size, "pupil_size_range": pupil_size_range}
-    response = requests.post(f"{URL}/googly_eyes", files=files, data=settings)
-    response.raise_for_status()
-    image = get_image_from_bytes(response.content)
+    image = get_image_from_bytes(base64.b64decode(data["image"].encode("utf-8")))
 
 
 if highlight_faces:
-    files = {"image": put_image_into_buffer(image)}
-    response = requests.post(f"{URL}/identify_faces", files=files)
-    response.raise_for_status()
-    for face in response.json():
+    for face in data["faces"]:
         _draw_face(image, Face(**face))
 
 st.image(image)
