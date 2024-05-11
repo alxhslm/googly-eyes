@@ -1,4 +1,3 @@
-import os
 
 import tensorflow as tf
 from tensorflow.keras.layers import (
@@ -15,11 +14,10 @@ from tensorflow.keras.layers import (
 )
 from tensorflow.keras.models import Model
 
-WEIGHTS_FILE = os.path.join(os.path.dirname(__file__), "retinaface.h5")
 IMAGE_SIZE = 1024
 
 
-def build_model(weights_file: str = WEIGHTS_FILE) -> Model:
+def build_model(weights_file: str) -> Model:
     """
     Build RetinaFace model
     """

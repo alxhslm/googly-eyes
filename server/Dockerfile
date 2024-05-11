@@ -12,7 +12,7 @@ RUN poetry install
 # Copy any python files and the model we had to the working directory of Docker
 COPY server/app.py ./
 COPY common ./common
-COPY retinaface ./retinaface
+COPY retinaface/retinaface.tflite ./
 
 # We need to expose the 8000 port because we're not able to communicate with Docker outside it
 EXPOSE 8000

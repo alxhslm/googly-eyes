@@ -1,5 +1,4 @@
 .env
 .venv
 retinaface/retinaface.h5
-retinaface/retinaface.tflite
 __pycache__/

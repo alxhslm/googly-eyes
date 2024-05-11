@@ -10,13 +10,9 @@ We then overlay Googly eyes with a random pupil size and orientation using [Pill
 
 ## Usage
 1. Install Docker on your machine
-2. Download the pre-trained model by running the following:
-    ```
-    wget https://github.com/alxhslm/googly-eyes/releases/download/v1.0/retinaface.tflite -O retinaface/retinaface.tflite
-    ```
-3. Run the following:
+2. Run the following:
     ```
     docker compose up dashboard
     ```
     which will build and launch the Flask server and Streamlit dashboard, each in a separate container.
-4. View the Streamlit dashboard in your browser by navigating to http://localhost:8501/.
+3. View the Streamlit dashboard in your browser by navigating to http://localhost:8501/.

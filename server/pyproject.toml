@@ -11,7 +11,7 @@ priority = "primary"
 [tool.poetry.dependencies]
 python = "~3.11"
 numpy = "1.23.5"
-tflite-runtime = "^2.14.0"
+tflite-runtime = "~2.14.0"
 pillow = "~10"
 flask = "^3.0.1"
 waitress = "^3.0.0"
