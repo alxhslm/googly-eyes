@@ -12,20 +12,20 @@ from common.image import put_image_into_buffer, deserialize_image, serialize_ima
 resource = "dzdzxpkrlmjj74daububqcowty0fbiev"
 region = "eu-west-2"
 host = f"{resource}.lambda-url.{region}.on.aws"
-URL = f"https://{host}/"
+url = f"https://{host}/"
 
 auth = AWSRequestsAuth(
     aws_access_key=os.environ["AWS_ACCESS_KEY_ID"],
     aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
     aws_host=host,
-    aws_region="eu-west-2",
+    aws_region=region,
     aws_service="lambda",
 )
 
 
 @st.cache_data
 def _add_googly_eyes(body: dict[str, t.Any]) -> dict[str, t.Any]:
-    response = requests.post(f"{URL}/googly_eyes", data=body, auth=auth)
+    response = requests.post(url, data=body, auth=auth)
     response.raise_for_status()
     return response.json()
 

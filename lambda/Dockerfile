@@ -2,8 +2,6 @@ FROM public.ecr.aws/lambda/python:3.11
 
 RUN pip install poetry==1.6.0
 
-WORKDIR /app
-
 # Copy the poetry files into our working directory
 COPY server/pyproject.toml server/poetry.lock ./
 RUN poetry config virtualenvs.in-project false
