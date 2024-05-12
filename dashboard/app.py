@@ -1,5 +1,6 @@
 import os
 
+from aws_requests_auth.aws_auth import AWSRequestsAuth
 import requests
 import streamlit as st
 from PIL import Image, ImageDraw
@@ -8,12 +9,23 @@ from common.drawing import plot_circle
 from common.face import Face
 from common.image import put_image_into_buffer, deserialize_image, serialize_image
 
-URL = os.environ.get("SERVER_URL", "http://localhost:8000")
+resource = "dzdzxpkrlmjj74daububqcowty0fbiev"
+region = "eu-west-2"
+host = f"{resource}.lambda-url.{region}.on.aws"
+URL = f"https://{host}/"
+
+auth = AWSRequestsAuth(
+    aws_access_key=os.environ["AWS_ACCESS_KEY_ID"],
+    aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+    aws_host=host,
+    aws_region="eu-west-2",
+    aws_service="lambda",
+)
 
 
 @st.cache_data
 def _add_googly_eyes(body: dict[str, t.Any]) -> dict[str, t.Any]:
-    response = requests.post(f"{URL}/googly_eyes", data=body)
+    response = requests.post(f"{URL}/googly_eyes", data=body, auth=auth)
     response.raise_for_status()
     return response.json()
 
