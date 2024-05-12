@@ -1,4 +1,3 @@
-import base64
 import os
 
 import requests
@@ -7,7 +6,7 @@ from PIL import Image, ImageDraw
 
 from common.drawing import plot_circle
 from common.face import Face
-from common.image import get_image_from_bytes, put_image_into_buffer
+from common.image import put_image_into_buffer, deserialize_image, serialize_image
 
 URL = os.environ.get("SERVER_URL", "http://localhost:8000")
 
@@ -57,7 +56,7 @@ with st.form("googly_eye_options"):
 image = Image.open(uploaded_file)
 
 body = {
-    "image": base64.b64encode(put_image_into_buffer(image).read()).decode("utf-8"),
+    "image": serialize_image(image),
     "eye_size": eye_size,
     "pupil_size_range": pupil_size_range,
 }
@@ -66,7 +65,7 @@ response.raise_for_status()
 data = response.json()
 
 if googly_eyes_enabled:
-    image = get_image_from_bytes(base64.b64decode(data["image"].encode("utf-8")))
+    image = deserialize_image(data["image"])
 
 
 if highlight_faces:

@@ -1,4 +1,3 @@
-import base64
 import os
 from dataclasses import asdict
 
@@ -9,7 +8,7 @@ from flask import Flask, jsonify, request
 from common.drawing import add_googly_eyes
 from common.face import Face
 from retinaface import detect
-from common.image import put_image_into_buffer, get_image_from_bytes
+from common.image import serialize_image, deserialize_image
 
 app = Flask(__name__)
 
@@ -48,7 +47,7 @@ def detect_faces(image: np.ndarray) -> list[Face]:
 
 @app.route("/googly_eyes", methods=["POST"])
 def googly_eyes():
-    image = get_image_from_bytes(base64.b64decode(request.form.get("image").encode("utf-8")))
+    image = deserialize_image(request.form.get("image"))
     eye_size = request.form.get("eye_size", default=0.5, type=float)
     pupil_size_range = request.form.getlist("pupil_size_range", float)
     pupil_size_range = tuple(pupil_size_range) if pupil_size_range else (0.4, 0.6)
@@ -56,7 +55,7 @@ def googly_eyes():
         add_googly_eyes(image, face, eye_size=eye_size, pupil_size_range=pupil_size_range)
     return jsonify(
         {
-            "image": base64.b64encode(put_image_into_buffer(image).read()).decode("utf-8"),
+            "image": serialize_image(image),
             "faces": [asdict(face) for face in detect_faces(np.array(image))],
         }
     )
