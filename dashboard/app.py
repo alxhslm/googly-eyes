@@ -3,12 +3,19 @@ import os
 import requests
 import streamlit as st
 from PIL import Image, ImageDraw
-
+import typing as t
 from common.drawing import plot_circle
 from common.face import Face
 from common.image import put_image_into_buffer, deserialize_image, serialize_image
 
 URL = os.environ.get("SERVER_URL", "http://localhost:8000")
+
+
+@st.cache_data
+def _add_googly_eyes(body: dict[str, t.Any]) -> dict[str, t.Any]:
+    response = requests.post(f"{URL}/googly_eyes", data=body)
+    response.raise_for_status()
+    return response.json()
 
 
 def _draw_face(image: Image, face: Face) -> None:
@@ -60,10 +67,8 @@ body = {
     "eye_size": eye_size,
     "pupil_size_range": pupil_size_range,
 }
-response = requests.post(f"{URL}/googly_eyes", data=body)
-response.raise_for_status()
-data = response.json()
 
+data = _add_googly_eyes(body)
 if googly_eyes_enabled:
     image = deserialize_image(data["image"])
 
