@@ -29,11 +29,12 @@ services:
   lambda :
     build:
       context: .
-      dockerfile: server/Dockerfile
+      dockerfile: lambda/Dockerfile
     volumes:
       - ${LOCAL_WORKSPACE_FOLDER:-.}/lambda:/app
       - ${LOCAL_WORKSPACE_FOLDER:-.}/common:/app/common
-
+    ports:
+      - "8080:8080"
 
 networks:
   default:
