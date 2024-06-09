@@ -45,10 +45,10 @@ def detect_faces(image: np.ndarray) -> list[Face]:
     ]
 
 
-def lambda_handler(event, context) -> dict[str, t.Any]:
+def lambda_handler(event: dict, context: t.Any) -> dict[str, t.Any]:
     data: dict[str, t.Any] = json.loads(event["body"])
     image = deserialize_image(data["image"])
-    eye_size = data.get("eye_size", default=0.5)
+    eye_size = data.get("eye_size", 0.5)
     pupil_size_range = data.get("pupil_size_range", None)
     if pupil_size_range:
         pupil_size_range = tuple(pupil_size_range)
@@ -58,8 +58,8 @@ def lambda_handler(event, context) -> dict[str, t.Any]:
         add_googly_eyes(image, face, eye_size=eye_size, pupil_size_range=pupil_size_range)
 
     image = deserialize_image(data["image"])
-    eye_size = data.get("eye_size", default=0.5)
-    pupil_size_range = data.get("pupil_size_range", default=[])
+    eye_size = data.get("eye_size", 0.5)
+    pupil_size_range = data.get("pupil_size_range", [])
     pupil_size_range = tuple(pupil_size_range) if pupil_size_range else (0.4, 0.6)
     for face in detect_faces(np.array(image)):
         add_googly_eyes(image, face, eye_size=eye_size, pupil_size_range=pupil_size_range)
