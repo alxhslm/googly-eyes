@@ -47,9 +47,10 @@ def detect_faces(image: np.ndarray) -> list[Face]:
 
 @app.route("/googly_eyes", methods=["POST"])
 def googly_eyes():
-    image = deserialize_image(request.form.get("image"))
-    eye_size = request.form.get("eye_size", default=0.5, type=float)
-    pupil_size_range = request.form.getlist("pupil_size_range", float)
+    data = request.get_json()
+    image = deserialize_image(data["image"])
+    eye_size = data.get("eye_size", 0.5)
+    pupil_size_range = data.get("pupil_size_range", [])
     pupil_size_range = tuple(pupil_size_range) if pupil_size_range else (0.4, 0.6)
     for face in detect_faces(np.array(image)):
         add_googly_eyes(image, face, eye_size=eye_size, pupil_size_range=pupil_size_range)

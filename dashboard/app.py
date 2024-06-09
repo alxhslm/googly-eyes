@@ -92,4 +92,5 @@ def run_dashboard(url: str, auth: AuthBase | None = None):
 
 
 if __name__ == "__main__":
-    run_dashboard(url=os.environ.get("SERVER_URL", "http://localhost:8000"))
+    server_url = os.environ.get("SERVER_URL", "http://localhost:8000")
+    run_dashboard(url=f"{server_url}/googly_eyes")
