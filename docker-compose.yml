@@ -16,7 +16,8 @@ services:
     depends_on:
       - lambda
     command: poetry run streamlit run app.py --server.port 8501 --browser.serverAddress localhost --server.runOnSave True
-
+    env_file:
+      - .env
   server:
     build:
       context: .
