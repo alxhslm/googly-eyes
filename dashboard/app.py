@@ -25,7 +25,7 @@ auth = AWSRequestsAuth(
 
 @st.cache_data
 def _add_googly_eyes(body: dict[str, t.Any]) -> dict[str, t.Any]:
-    response = requests.post(url, data=body, auth=auth)
+    response = requests.post(url, json=body, auth=auth)
     response.raise_for_status()
     return response.json()
 
