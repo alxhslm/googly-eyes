@@ -1,3 +1,4 @@
+import json
 import os
 import typing as t
 
@@ -44,10 +45,11 @@ def detect_faces(image: np.ndarray) -> list[Face]:
     ]
 
 
-def lambda_handler(event: dict[str, t.Any], context) -> dict[str, t.Any]:
-    image = deserialize_image(event["body"]["image"])
-    eye_size = event["body"].get("eye_size", default=0.5, type=float)
-    pupil_size_range = event["body"].get("pupil_size_range", None)
+def lambda_handler(event, context) -> dict[str, t.Any]:
+    data: dict[str, t.Any] = json.loads(event["body"])
+    image = deserialize_image(data["image"])
+    eye_size = data.get("eye_size", default=0.5)
+    pupil_size_range = data.get("pupil_size_range", None)
     if pupil_size_range:
         pupil_size_range = tuple(pupil_size_range)
     else:
@@ -55,9 +57,9 @@ def lambda_handler(event: dict[str, t.Any], context) -> dict[str, t.Any]:
     for face in detect_faces(np.array(image)):
         add_googly_eyes(image, face, eye_size=eye_size, pupil_size_range=pupil_size_range)
 
-    image = deserialize_image(event["body"]["image"])
-    eye_size = event["body"].get("eye_size", default=0.5, type=float)
-    pupil_size_range = event["body"].getlist("pupil_size_range", float)
+    image = deserialize_image(data["image"])
+    eye_size = data.get("eye_size", default=0.5)
+    pupil_size_range = data.get("pupil_size_range", default=[])
     pupil_size_range = tuple(pupil_size_range) if pupil_size_range else (0.4, 0.6)
     for face in detect_faces(np.array(image)):
         add_googly_eyes(image, face, eye_size=eye_size, pupil_size_range=pupil_size_range)
