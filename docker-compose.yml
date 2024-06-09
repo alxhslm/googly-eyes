@@ -17,7 +17,6 @@ services:
       - server
     command: poetry run streamlit run app.py --server.port 8501 --browser.serverAddress localhost --server.runOnSave True
 
-
   server:
     build:
       context: .
@@ -27,8 +26,6 @@ services:
       - ${LOCAL_WORKSPACE_FOLDER:-.}/common:/app/common
       - ${LOCAL_WORKSPACE_FOLDER:-.}/retinaface:/app/retinaface
     command: poetry run hupper -m waitress --host=0.0.0.0 --port=8000 app:app
-
-
 
 networks:
   default:
