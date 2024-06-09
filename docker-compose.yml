@@ -14,10 +14,10 @@ services:
       - ${LOCAL_WORKSPACE_FOLDER:-.}/dashboard:/app
       - ${LOCAL_WORKSPACE_FOLDER:-.}/common:/app/common
     depends_on:
-      - lambda
+      - server
     command: poetry run streamlit run app.py --server.port 8501 --browser.serverAddress localhost --server.runOnSave True
-    env_file:
-      - .env
+
+
   server:
     build:
       context: .
@@ -27,12 +27,7 @@ services:
       - ${LOCAL_WORKSPACE_FOLDER:-.}/common:/app/common
     command: poetry run hupper -m waitress --host=0.0.0.0 --port=8000 app:app
 
-  lambda :
-    build:
-      context: .
-      dockerfile: lambda/Dockerfile
-    ports:
-      - "8080:8080"
+
 
 networks:
   default:
