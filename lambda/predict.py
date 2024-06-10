@@ -1,16 +1,16 @@
+import json
 import os
+import typing as t
+
 from dataclasses import asdict
 
-import numpy as np
-import tflite_runtime.interpreter as tflite
-from flask import Flask, jsonify, request
-
 from common.drawing import add_googly_eyes
-from common.face import Face
-from retinaface import detect
+import numpy as np
 from common.image import serialize_image, deserialize_image
+import tflite_runtime.interpreter as tflite
+from retinaface import detect
+from common.face import Face
 
-app = Flask(__name__)
 
 interpreter = tflite.Interpreter(model_path=os.path.join(os.path.dirname(detect.__file__), "retinaface.tflite"))
 # We need this list of output names to ensure that the outputs from the tflite model are in the same order as the
@@ -45,22 +45,25 @@ def detect_faces(image: np.ndarray) -> list[Face]:
     ]
 
 
-@app.route("/googly_eyes", methods=["POST"])
-def googly_eyes():
-    data = request.get_json()
+def lambda_handler(event: dict, context: t.Any) -> dict[str, t.Any]:
+    data: dict[str, t.Any] = json.loads(event["body"])
+    image = deserialize_image(data["image"])
+    eye_size = data.get("eye_size", 0.5)
+    pupil_size_range = data.get("pupil_size_range", None)
+    if pupil_size_range:
+        pupil_size_range = tuple(pupil_size_range)
+    else:
+        pupil_size_range = (0.4, 0.6)
+    for face in detect_faces(np.array(image)):
+        add_googly_eyes(image, face, eye_size=eye_size, pupil_size_range=pupil_size_range)
+
     image = deserialize_image(data["image"])
     eye_size = data.get("eye_size", 0.5)
     pupil_size_range = data.get("pupil_size_range", [])
     pupil_size_range = tuple(pupil_size_range) if pupil_size_range else (0.4, 0.6)
     for face in detect_faces(np.array(image)):
         add_googly_eyes(image, face, eye_size=eye_size, pupil_size_range=pupil_size_range)
-    return jsonify(
-        {
-            "image": serialize_image(image),
-            "faces": [asdict(face) for face in detect_faces(np.array(image))],
-        }
-    )
-
-
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=8000)
+    return {
+        "image": serialize_image(image),
+        "faces": [asdict(face) for face in detect_faces(np.array(image))],
+    }

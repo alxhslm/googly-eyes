@@ -10,8 +10,18 @@ priority = "primary"
 
 [tool.poetry.dependencies]
 python = "~3.11"
-mypy = "~1.0.0"
+numpy  = "1.23.5"
+streamlit = "1.30.0"
+pillow = "~10"
+requests = "^2.31.0"
+aws-requests-auth = "^0.4.3"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
 tensorflow = "~2.14.0"
+mypy = "~1.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
