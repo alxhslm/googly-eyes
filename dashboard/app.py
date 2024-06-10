@@ -25,6 +25,8 @@ def _draw_face(image: Image, face: Face) -> None:
 
 
 def run_dashboard(url: str, auth: AuthBase | None = None):
+    st.set_page_config("Googly eyes", page_icon=":eyes:")
+
     st.title(":eyes: Googly eyes")
 
     uploaded_file = st.file_uploader("Upload photo", type=["png", "jpg"])
