@@ -5,7 +5,7 @@ The objective of this project is to be able to:
 1. Detect faces in an image
 2. Replace all of the eyes with googly eyes
 
-The [RetinaFace](hhttps://openaccess.thecvf.com/content_CVPR_2020/papers/Deng_RetinaFace_Single-Shot_Multi-Level_Face_Localisation_in_the_Wild_CVPR_2020_paper.pdf) model is used to detect faces and eyes.
+The [RetinaFace](https://openaccess.thecvf.com/content_CVPR_2020/papers/Deng_RetinaFace_Single-Shot_Multi-Level_Face_Localisation_in_the_Wild_CVPR_2020_paper.pdf) model is used to detect faces and eyes.
 
 We then overlay Googly eyes with a random pupil size and orientation using [Pillow](https://pillow.readthedocs.io/en/stable/).
 
