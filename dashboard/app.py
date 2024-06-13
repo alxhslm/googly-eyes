@@ -28,6 +28,10 @@ def run_dashboard(url: str, auth: AuthBase | None = None):
     st.set_page_config("Googly eyes", page_icon=":eyes:")
 
     st.title(":eyes: Googly eyes")
+    st.markdown(
+        "This is an ML-powered app for automatically adding Googly eyes to photos. "
+        "You can find out more about how it works [here](https://alxhslm.github.io/projects/googly-eyes/)."
+    )
 
     uploaded_file = st.file_uploader("Upload photo", type=["png", "jpg"])
     if uploaded_file is None:
