@@ -1,2 +1,2 @@
 [lfs]
-    smudge = git-lfs smudge --skip -- %f
+    skipSmudge = true
