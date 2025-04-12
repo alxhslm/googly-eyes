@@ -7,7 +7,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     direnv \
     git \
-    git-lfs \
+
     expect \
     libgl1-mesa-dev \
     && rm -rf /var/lib/apt/lists/*

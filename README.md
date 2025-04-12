@@ -11,9 +11,10 @@ We then overlay Googly eyes with a random pupil size and orientation using [Pill
 
 ## Usage
 1. Install Docker on your machine
-2. Run the following:
+2. Convert the model to TensorFlow Lite following the instructions [here](retinaface/README.md#converting-a-model-to-tflite)
+3. Run the following:
     ```
     docker compose up dashboard
     ```
     which will build and launch the Flask server and Streamlit dashboard, each in a separate container.
-3. View the Streamlit dashboard in your browser by navigating to http://localhost:8501/.
+4. View the Streamlit dashboard in your browser by navigating to http://localhost:8501/.
