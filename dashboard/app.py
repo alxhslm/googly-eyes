@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw
 import typing as t
 from common.drawing import plot_circle
 from common.face import Face
-from common.image import put_image_into_buffer, deserialize_image, serialize_image
+from common.image import put_image_into_buffer, deserialize_image, serialize_image, serialize_exif
 from requests.auth import AuthBase
 
 
@@ -74,6 +74,7 @@ def run_dashboard(url: str, auth: AuthBase | None = None):
         "image": serialize_image(image),
         "eye_size": eye_size,
         "pupil_size_range": pupil_size_range,
+        "exif": serialize_exif(image.info.get("exif", None)),
     }
 
     data = _add_googly_eyes(body, _url=url, _auth=auth)

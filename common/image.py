@@ -22,5 +22,13 @@ def serialize_image(image: Image.Image, **kwargs: Any) -> str:
     return base64.b64encode(put_image_into_buffer(image, **kwargs).read()).decode("utf-8")
 
 
+def serialize_exif(exif) -> str:
+    return base64.b64encode(exif).decode("utf-8")
+
+
 def deserialize_image(data: str) -> Image.Image:
     return get_image_from_bytes(base64.b64decode(data.encode("utf-8")))
+
+
+def deserialize_exif(data) -> str:
+    return base64.b64decode(data.encode("utf-8"))
