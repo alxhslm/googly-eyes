@@ -30,5 +30,7 @@ def deserialize_image(data: str) -> Image.Image:
     return get_image_from_bytes(base64.b64decode(data.encode("utf-8")))
 
 
-def deserialize_exif(data) -> str:
+def deserialize_exif(data: Any) -> str | None:
+    if not data:
+        return None
     return base64.b64decode(data.encode("utf-8"))
