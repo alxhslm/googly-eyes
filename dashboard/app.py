@@ -6,8 +6,9 @@ from PIL import Image, ImageDraw
 import typing as t
 from common.drawing import plot_circle
 from common.face import Face
-from common.image import put_image_into_buffer, deserialize_image, serialize_image, serialize_exif
+from common.image import put_image_into_buffer, deserialize_image, serialize_image
 from requests.auth import AuthBase
+from PIL import ImageOps
 
 
 @st.cache_data
@@ -69,12 +70,10 @@ def run_dashboard(url: str, auth: AuthBase | None = None):
         st.form_submit_button("Update")
 
     image = Image.open(uploaded_file)
-
     body = {
         "image": serialize_image(image),
         "eye_size": eye_size,
         "pupil_size_range": pupil_size_range,
-        "exif": serialize_exif(image.info.get("exif", None)),
     }
 
     data = _add_googly_eyes(body, _url=url, _auth=auth)
@@ -85,7 +84,7 @@ def run_dashboard(url: str, auth: AuthBase | None = None):
         for face in data["faces"]:
             _draw_face(image, Face(**face))
 
-    st.image(image)
+    st.image(ImageOps.exif_transpose(image))
 
     buffer = put_image_into_buffer(image)
     filename, ext = uploaded_file.name.split(".")

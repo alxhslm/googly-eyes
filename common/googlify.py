@@ -5,7 +5,7 @@ from dataclasses import asdict
 
 from common.drawing import add_googly_eyes
 import numpy as np
-from common.image import deserialize_exif, serialize_image, deserialize_image
+from common.image import serialize_image, deserialize_image
 import tflite_runtime.interpreter as tflite
 from retinaface import detect
 from common.face import Face
@@ -45,7 +45,6 @@ def detect_faces(image: np.ndarray) -> list[Face]:
 
 def googlify(data: dict[str, t.Any]) -> dict[str, t.Any]:
     image = deserialize_image(data["image"])
-    exif_data = deserialize_exif(data.get("exif"))
     eye_size = data.get("eye_size", 0.5)
     pupil_size_range = data.get("pupil_size_range", None)
     if pupil_size_range:
@@ -61,8 +60,7 @@ def googlify(data: dict[str, t.Any]) -> dict[str, t.Any]:
     pupil_size_range = tuple(pupil_size_range) if pupil_size_range else (0.4, 0.6)
     for face in detect_faces(np.array(image)):
         add_googly_eyes(image, face, eye_size=eye_size, pupil_size_range=pupil_size_range)
-    kwargs = {"exif": exif_data} if exif_data else {}
     return {
-        "image": serialize_image(image, **kwargs),
+        "image": serialize_image(image),
         "faces": [asdict(face) for face in detect_faces(np.array(image))],
     }
