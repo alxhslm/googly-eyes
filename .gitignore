@@ -2,3 +2,4 @@
 .venv
 retinaface/retinaface.h5
 __pycache__/
+retinaface/retinaface.tflite
