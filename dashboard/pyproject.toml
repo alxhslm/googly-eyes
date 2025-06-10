@@ -13,7 +13,7 @@ python = "~3.11"
 numpy  = "1.23.5"
 streamlit = "1.37.0"
 pillow = "~10"
-requests = "^2.32.0"
+requests = "^2.32.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
