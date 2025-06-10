@@ -14,7 +14,7 @@ python = "~3.11"
 numpy  = "1.23.5"
 streamlit = "1.37.0"
 pillow = "~10"
-requests = "^2.31.0"
+requests = "^2.32.4"
 aws-requests-auth = "^0.4.3"
 
 [tool.poetry.group.dev]
