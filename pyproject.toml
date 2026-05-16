@@ -23,6 +23,7 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 tensorflow = "~2.14.0"
 mypy = "~1.0.0"
+pytest = "^8.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -51,6 +52,10 @@ datetime = "dt"
 "plotly.graph_objects" = "go"
 streamlit = "st"
 typing = "t"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
 
 [tool.mypy]
 strict=true
