@@ -62,7 +62,7 @@ class TestResizeImage:
         # im_offset = (0.0, (w-h)/2) = (0.0, 100.0)
         img = _solid_image(200, 400)
         _, _, offset = resize_image(img, target_size=(1024, 1024), allow_upscaling=True)
-        assert offset[0] == pytest.approx(0.0)           # no row offset
+        assert offset[0] == pytest.approx(0.0)  # no row offset
         assert offset[1] == pytest.approx((400 - 200) / 2)  # column offset from padding
 
     def test_offset_square_image_is_zero(self):

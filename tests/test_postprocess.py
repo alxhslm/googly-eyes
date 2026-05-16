@@ -71,10 +71,10 @@ class TestClipBoxes:
     def test_clips_to_image_bounds(self):
         boxes = np.array([[-10.0, -5.0, 200.0, 300.0]])
         result = clip_boxes(boxes, im_shape=(100, 150))
-        assert result[0, 0] >= 0          # x1
-        assert result[0, 1] >= 0          # y1
-        assert result[0, 2] <= 149        # x2 < width
-        assert result[0, 3] <= 99         # y2 < height
+        assert result[0, 0] >= 0  # x1
+        assert result[0, 1] >= 0  # y1
+        assert result[0, 2] <= 149  # x2 < width
+        assert result[0, 3] <= 99  # y2 < height
 
     def test_in_bounds_boxes_unchanged(self):
         boxes = np.array([[10.0, 20.0, 50.0, 60.0]])
@@ -99,29 +99,35 @@ class TestAnchorsPlane:
 
 class TestCpuNms:
     def test_non_overlapping_boxes_all_kept(self):
-        dets = np.array([
-            [0, 0, 10, 10, 0.9],
-            [20, 20, 30, 30, 0.8],
-            [40, 40, 50, 50, 0.7],
-        ])
+        dets = np.array(
+            [
+                [0, 0, 10, 10, 0.9],
+                [20, 20, 30, 30, 0.8],
+                [40, 40, 50, 50, 0.7],
+            ]
+        )
         kept = cpu_nms(dets, threshold=0.5)
         assert len(kept) == 3
 
     def test_fully_overlapping_keeps_highest_score(self):
-        dets = np.array([
-            [0, 0, 10, 10, 0.9],
-            [0, 0, 10, 10, 0.5],
-        ])
+        dets = np.array(
+            [
+                [0, 0, 10, 10, 0.9],
+                [0, 0, 10, 10, 0.5],
+            ]
+        )
         kept = cpu_nms(dets, threshold=0.5)
         assert len(kept) == 1
         assert dets[kept[0], 4] == pytest.approx(0.9)
 
     def test_partial_overlap_below_threshold_both_kept(self):
         # Small overlap — both should survive at threshold=0.5
-        dets = np.array([
-            [0, 0, 10, 10, 0.9],
-            [8, 8, 18, 18, 0.8],
-        ])
+        dets = np.array(
+            [
+                [0, 0, 10, 10, 0.9],
+                [8, 8, 18, 18, 0.8],
+            ]
+        )
         kept = cpu_nms(dets, threshold=0.5)
         assert len(kept) == 2
 
@@ -143,5 +149,5 @@ class TestTransformBbox:
         x = np.array([200.0])
         y = np.array([100.0])
         tx, ty = transform_bbox(x, y, im_scale=2.0, im_offset=(10.0, 5.0))
-        np.testing.assert_allclose(tx, [90.0])   # 200/2 - 10
-        np.testing.assert_allclose(ty, [45.0])   # 100/2 - 5
+        np.testing.assert_allclose(tx, [90.0])  # 200/2 - 10
+        np.testing.assert_allclose(ty, [45.0])  # 100/2 - 5
