@@ -30,6 +30,8 @@ jobs:
 
       - name: Build tflite model
         if: steps.cache-model.outputs.cache-hit != 'true'
+        env:
+          PYTHONPATH: ${{ github.workspace }}
         run: poetry run python retinaface/convert_model.py
 
       - uses: actions/upload-artifact@v4
