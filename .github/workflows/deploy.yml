@@ -6,49 +6,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-model:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Cache tflite model
-        id: cache-model
-        uses: actions/cache@v4
-        with:
-          path: retinaface/retinaface.tflite
-          key: tflite-${{ hashFiles('retinaface/**/*.py') }}
-
-      - name: Set up Python
-        if: steps.cache-model.outputs.cache-hit != 'true'
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        if: steps.cache-model.outputs.cache-hit != 'true'
-        run: pip install poetry && poetry install --with dev
-
-      - name: Build tflite model
-        if: steps.cache-model.outputs.cache-hit != 'true'
-        env:
-          PYTHONPATH: ${{ github.workspace }}
-        run: poetry run python retinaface/convert_model.py
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: retinaface-tflite
-          path: retinaface/retinaface.tflite
-
   deploy:
-    needs: build-model
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: retinaface-tflite
-          path: retinaface/
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:

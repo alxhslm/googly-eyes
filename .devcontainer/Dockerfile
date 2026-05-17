@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 
-FROM mcr.microsoft.com/devcontainers/python:3.11-bookworm
+FROM mcr.microsoft.com/devcontainers/python:3.12-bookworm
 
 # Install required system packages
 RUN apt-get update \

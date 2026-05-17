@@ -10,8 +10,9 @@ name = "PyPI"
 priority = "primary"
 
 [tool.poetry.dependencies]
-python = "~3.11"
-numpy  = "1.23.5"
+python = "~3.12"
+numpy = "~1.26"
+onnxruntime = "^1.17"
 streamlit = "1.54.0"
 pillow = "~12"
 requests = "^2.33.0"
@@ -21,7 +22,9 @@ aws-requests-auth = "^0.4.3"
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-tensorflow = "~2.14.0"
+torch = "^2.0"
+onnx = "^1.15"
+huggingface-hub = "^0.20"
 mypy = "~1.0.0"
 pytest = ">=8,<10"
 
