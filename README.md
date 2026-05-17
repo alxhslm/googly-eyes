@@ -1,5 +1,5 @@
 # :eyes: Googly eyes
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://googly-eyes.streamlit.app/)
+[![Streamlit App](https://img.shields.io/badge/Streamlit-App-FF4B4B?logo=streamlit&logoColor=white)](https://googly-eyes.streamlit.app/)
 
 The objective of this project is to be able to:
 1. Detect faces in an image
