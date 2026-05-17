@@ -81,17 +81,17 @@ class TestPreprocessImage:
     def test_output_tensor_shape(self):
         img = _solid_image(200, 300)
         tensor, im_shape, _, _ = preprocess_image(img, allow_upscaling=True)
-        assert tensor.shape == (1, 1024, 1024, 3)
-        assert im_shape == (1024, 1024)
+        assert tensor.shape == (1, 3, 640, 640)
+        assert im_shape == (640, 640)
 
     def test_output_dtype_is_float32(self):
         img = _solid_image(100, 100)
         tensor, _, _, _ = preprocess_image(img, allow_upscaling=True)
         assert tensor.dtype == np.float32
 
-    def test_pixel_values_normalised(self):
-        # With pixel_scale=1, means=0, stds=1 the values just become float
+    def test_pixel_values_mean_subtracted(self):
+        # BGR means (104, 117, 123); darkest possible pixel after subtraction is 0 - 123 = -123
         img = np.full((50, 50, 3), 128, dtype=np.uint8)
         tensor, _, _, _ = preprocess_image(img, allow_upscaling=True)
-        assert tensor.max() <= 255.0
-        assert tensor.min() >= 0.0
+        assert tensor.min() >= -123.0
+        assert tensor.max() <= 255.0 - 104.0

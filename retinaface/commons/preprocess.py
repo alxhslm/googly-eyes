@@ -86,17 +86,14 @@ def preprocess_image(
     Returns:
         tensor, image shape, im_scale
     """
-    pixel_means = np.array([0.0, 0.0, 0.0], dtype=np.float32)
-    pixel_stds = np.array([1.0, 1.0, 1.0], dtype=np.float32)
-    pixel_scale = float(1.0)
+    # BGR mean values from biubug6/Pytorch_Retinaface training config
+    _PIXEL_MEANS = np.array([104.0, 117.0, 123.0], dtype=np.float32)
 
-    img, im_scale, im_offset = resize_image(img, target_size=(1024, 1024), allow_upscaling=allow_upscaling)
+    img, im_scale, im_offset = resize_image(img, target_size=(640, 640), allow_upscaling=allow_upscaling)
     img = img.astype(np.float32)
-    im_tensor = np.zeros((1, img.shape[0], img.shape[1], img.shape[2]), dtype=np.float32)
+    img = img[:, :, ::-1]  # RGB → BGR
+    img -= _PIXEL_MEANS
     im_shape = (img.shape[0], img.shape[1])
-
-    # Make image scaling + transpose (N,H,W,C) to (N,C,H,W)
-    for i in range(3):
-        im_tensor[0, :, :, i] = (img[:, :, i] / pixel_scale - pixel_means[i]) / pixel_stds[i]
+    im_tensor = img.transpose(2, 0, 1)[np.newaxis, :, :, :]  # HWC → NCHW
 
     return im_tensor, im_shape, im_scale, im_offset
