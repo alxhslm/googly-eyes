@@ -1,35 +1,22 @@
 import os
 import typing as t
-
 from dataclasses import asdict
 
-from common.drawing import add_googly_eyes
 import numpy as np
-from common.image import serialize_image, deserialize_image
-import tflite_runtime.interpreter as tflite
-from retinaface import detect
-from common.face import Face
+import onnxruntime
 
-interpreter = tflite.Interpreter(model_path=os.path.join(os.path.dirname(detect.__file__), "retinaface.tflite"))
-# We need this list of output names to ensure that the outputs from the tflite model are in the same order as the
-# original Keras model
-output_names = [
-    "tf.compat.v1.transpose_1",
-    "face_rpn_bbox_pred_stride32",
-    "face_rpn_landmark_pred_stride32",
-    "tf.compat.v1.transpose_3",
-    "face_rpn_bbox_pred_stride16",
-    "face_rpn_landmark_pred_stride16",
-    "tf.compat.v1.transpose_5",
-    "face_rpn_bbox_pred_stride8",
-    "face_rpn_landmark_pred_stride8",
-]
+from common.drawing import add_googly_eyes
+from common.face import Face
+from common.image import deserialize_image, serialize_image
+from retinaface import detect
+
+_session = onnxruntime.InferenceSession(
+    os.path.join(os.path.dirname(detect.__file__), "retinaface.onnx")
+)
 
 
 def _model(X: np.ndarray) -> list[np.ndarray]:
-    model = interpreter.get_signature_runner("serving_default")
-    result = model(data=X)
-    return [result[o] for o in output_names]
+    return _session.run(["bbox", "cls", "ldm"], {"input": X})
 
 
 def detect_faces(image: np.ndarray) -> list[Face]:

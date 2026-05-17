@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 RUN pip install poetry==1.6.0
 
@@ -13,7 +13,7 @@ COPY common ./common
 COPY retinaface/__init__.py ./retinaface/__init__.py
 COPY retinaface/commons ./retinaface/commons
 COPY retinaface/detect.py ./retinaface/detect.py
-COPY retinaface/retinaface.tflite ./retinaface/retinaface.tflite
+COPY retinaface/retinaface.onnx retinaface/retinaface.onnx.data ./retinaface/
 
 ENTRYPOINT [ "/usr/local/bin/python", "-m", "awslambdaric" ]
 CMD [ "predict.lambda_handler" ]

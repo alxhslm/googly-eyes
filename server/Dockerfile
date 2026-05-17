@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 RUN pip install poetry==1.6.0
 
@@ -15,7 +15,7 @@ COPY common ./common
 COPY retinaface/__init__.py ./retinaface/__init__.py
 COPY retinaface/commons ./retinaface/commons
 COPY retinaface/detect.py ./retinaface/detect.py
-COPY retinaface/retinaface.tflite ./retinaface/retinaface.tflite
+COPY retinaface/retinaface.onnx retinaface/retinaface.onnx.data ./retinaface/
 
 # We need to expose the 8000 port because we're not able to communicate with Docker outside it
 EXPOSE 8000
