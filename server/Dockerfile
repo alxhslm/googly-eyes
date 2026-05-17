@@ -15,7 +15,7 @@ COPY common ./common
 COPY retinaface/__init__.py ./retinaface/__init__.py
 COPY retinaface/commons ./retinaface/commons
 COPY retinaface/detect.py ./retinaface/detect.py
-COPY retinaface/retinaface.onnx ./retinaface/retinaface.onnx
+COPY retinaface/retinaface.onnx retinaface/retinaface.onnx.data ./retinaface/
 
 # We need to expose the 8000 port because we're not able to communicate with Docker outside it
 EXPOSE 8000
