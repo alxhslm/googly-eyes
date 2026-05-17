@@ -13,7 +13,7 @@ COPY common ./common
 COPY retinaface/__init__.py ./retinaface/__init__.py
 COPY retinaface/commons ./retinaface/commons
 COPY retinaface/detect.py ./retinaface/detect.py
-COPY retinaface/retinaface.onnx ./retinaface/retinaface.onnx
+COPY retinaface/retinaface.onnx retinaface/retinaface.onnx.data ./retinaface/
 
 ENTRYPOINT [ "/usr/local/bin/python", "-m", "awslambdaric" ]
 CMD [ "predict.lambda_handler" ]
