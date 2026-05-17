@@ -28,3 +28,5 @@ jobs:
           imageName: devcontainer-build-check
           push: never
           configFile: .devcontainer/devcontainer.json
+          cacheFrom: type=gha
+          cacheTo: type=gha,mode=max
