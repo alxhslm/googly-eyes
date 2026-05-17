@@ -1,8 +1,8 @@
 """
-Integration tests against the real TFLite model using a known test image.
+Integration tests against the real ONNX model using a known test image.
 
-These tests require tflite_runtime and the compiled model, so they are skipped
-in the unit-test CI environment where those are unavailable.
+These tests require the compiled retinaface.onnx model, so they are skipped
+in the unit-test CI environment where it is unavailable.
 
 Run manually (inside the server container) with:
     poetry run pytest tests/test_model.py -v
@@ -14,51 +14,44 @@ import numpy as np
 import pytest
 from PIL import Image
 
-TFLITE_AVAILABLE = False
-try:
-    from tflite_runtime.interpreter import Interpreter as _Interpreter
-    # conftest.py mocks tflite_runtime as a MagicMock in unit-test CI — a real
-    # module exposes Interpreter as a class, a mock does not.
-    TFLITE_AVAILABLE = isinstance(_Interpreter, type)
-except ImportError:
-    pass
+ONNX_MODEL_AVAILABLE = os.path.exists(os.path.join(os.path.dirname(__file__), "..", "retinaface", "retinaface.onnx"))
 
-pytestmark = pytest.mark.skipif(not TFLITE_AVAILABLE, reason="tflite_runtime not installed")
+pytestmark = pytest.mark.skipif(not ONNX_MODEL_AVAILABLE, reason="retinaface.onnx not present")
 
 TEST_IMAGE = os.path.join(os.path.dirname(__file__), "group_of_people.jpg")
 
-# Gold-standard predictions captured from the current model on 2026-05-17.
+# Gold-standard predictions captured from the ONNX model on 2026-05-17.
 # Each entry: (right_eye, left_eye) in image pixel coordinates.
 EXPECTED_FACES = [
     {
-        "score": 0.9991,
-        "bbox": [1010, 2482, 1230, 2771],
-        "right_eye": [1072.2521, 2585.7686],
-        "left_eye": [1175.6461, 2593.8928],
+        "score": 0.9990,
+        "bbox": [1007, 2483, 1234, 2770],
+        "right_eye": [1070.376, 2584.4277],
+        "left_eye": [1176.9109, 2592.7446],
     },
     {
-        "score": 0.9987,
-        "bbox": [1728, 2540, 1957, 2824],
-        "right_eye": [1770.6294, 2665.843],
-        "left_eye": [1875.1309, 2633.7722],
+        "score": 0.9988,
+        "bbox": [454, 2426, 670, 2698],
+        "right_eye": [527.3534, 2519.5051],
+        "left_eye": [627.3571, 2534.4487],
     },
     {
-        "score": 0.9985,
-        "bbox": [463, 2421, 671, 2713],
-        "right_eye": [524.5632, 2518.8127],
-        "left_eye": [621.5748, 2537.2546],
+        "score": 0.9978,
+        "bbox": [2278, 2395, 2496, 2661],
+        "right_eye": [2317.5776, 2500.7954],
+        "left_eye": [2419.0125, 2491.7854],
     },
     {
-        "score": 0.9984,
-        "bbox": [2285, 2376, 2505, 2678],
-        "right_eye": [2327.4814, 2513.7825],
-        "left_eye": [2432.2595, 2486.8306],
+        "score": 0.9974,
+        "bbox": [2884, 2459, 3133, 2752],
+        "right_eye": [2929.3679, 2579.1292],
+        "left_eye": [3042.5022, 2564.491],
     },
     {
-        "score": 0.9979,
-        "bbox": [2886, 2458, 3129, 2768],
-        "right_eye": [2935.7007, 2587.1938],
-        "left_eye": [3048.3145, 2563.0161],
+        "score": 0.9963,
+        "bbox": [1724, 2546, 1949, 2816],
+        "right_eye": [1776.3665, 2655.4387],
+        "left_eye": [1869.9397, 2643.5427],
     },
 ]
 
