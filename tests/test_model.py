@@ -14,11 +14,14 @@ import numpy as np
 import pytest
 from PIL import Image
 
-TFLITE_AVAILABLE = True
+TFLITE_AVAILABLE = False
 try:
-    import tflite_runtime.interpreter  # noqa: F401
+    from tflite_runtime.interpreter import Interpreter as _Interpreter
+    # conftest.py mocks tflite_runtime as a MagicMock in unit-test CI — a real
+    # module exposes Interpreter as a class, a mock does not.
+    TFLITE_AVAILABLE = isinstance(_Interpreter, type)
 except ImportError:
-    TFLITE_AVAILABLE = False
+    pass
 
 pytestmark = pytest.mark.skipif(not TFLITE_AVAILABLE, reason="tflite_runtime not installed")
 
