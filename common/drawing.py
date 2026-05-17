@@ -20,15 +20,15 @@ def add_googly_eyes(image: Image, face: Face, eye_size: float, pupil_size_range:
             draw,
             eye,
             radius=eye_size * radius,
-            fill=(255, 255, 255, 0),
-            outline=(0, 0, 0, 0),
+            fill=(255, 255, 255, 255),
+            outline=(0, 0, 0, 255),
         )
         orientation = np.random.uniform(0, np.pi)
         plot_circle(
             draw,
             np.array(eye) + (eye_size - pupil_size) * radius * np.array([np.sin(orientation), np.cos(orientation)]),
             radius=pupil_size * radius,
-            fill=(0, 0, 0, 0),
+            fill=(0, 0, 0, 255),
         )
 
     plot_googly_eye(face.landmarks["right_eye"])
