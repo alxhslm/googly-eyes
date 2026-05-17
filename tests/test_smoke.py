@@ -18,9 +18,11 @@ from PIL import Image
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lambda"))
 
 
-def _make_payload(width: int = 100, height: int = 100) -> dict:
+def _make_payload(width: int = 100, height: int = 100, mode: str = "RGB") -> dict:
     buf = BytesIO()
-    Image.new("RGB", (width, height), color=(200, 200, 200)).save(buf, format="JPEG")
+    fmt = "PNG" if mode == "RGBA" else "JPEG"
+    color = (200, 200, 200, 128) if mode == "RGBA" else (200, 200, 200)
+    Image.new(mode, (width, height), color=color).save(buf, format=fmt)
     buf.seek(0)
     import base64
 
@@ -82,6 +84,26 @@ class TestLambdaSmoke:
             result = predict.lambda_handler({"body": json.dumps(payload)}, None)
 
         assert "image" in result
+
+    def test_rgba_input_preserves_alpha_in_output(self):
+        import predict
+
+        with patch("common.googlify.detect_faces", return_value=[]):
+            result = predict.lambda_handler({"body": json.dumps(_make_payload(mode="RGBA"))}, None)
+
+        from common.image import deserialize_image
+
+        assert deserialize_image(result["image"]).mode == "RGBA"
+
+    def test_rgb_input_does_not_gain_alpha(self):
+        import predict
+
+        with patch("common.googlify.detect_faces", return_value=[]):
+            result = predict.lambda_handler({"body": json.dumps(_make_payload(mode="RGB"))}, None)
+
+        from common.image import deserialize_image
+
+        assert deserialize_image(result["image"]).mode == "RGB"
 
     def test_response_image_differs_from_input_when_face_detected(self):
         import predict

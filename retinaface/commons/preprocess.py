@@ -38,6 +38,10 @@ def get_image(img_uri: str | np.ndarray) -> np.ndarray:
     if len(img.shape) != 3 or np.prod(img.shape) == 0:
         raise ValueError("Input image needs to have 3 channels at must not be empty.")
 
+    # Strip alpha channel if present (e.g. RGBA PNGs)
+    if img.shape[2] == 4:
+        img = img[:, :, :3]
+
     return img
 
 

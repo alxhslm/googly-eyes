@@ -27,6 +27,13 @@ def _make_png_image() -> Image.Image:
     return Image.open(buf)
 
 
+def _make_rgba_png_image() -> Image.Image:
+    buf = BytesIO()
+    Image.new("RGBA", (20, 20), color=(10, 20, 30, 128)).save(buf, format="PNG")
+    buf.seek(0)
+    return Image.open(buf)
+
+
 class TestGetImageFromBytes:
     def test_returns_pil_image(self):
         buf = BytesIO()
@@ -92,6 +99,16 @@ class TestSerializeDeserialize:
         img = _make_png_image()
         recovered = deserialize_image(serialize_image(img))
         np.testing.assert_array_equal(np.array(recovered), np.array(img))
+
+    def test_roundtrip_preserves_rgba_mode(self):
+        img = _make_rgba_png_image()
+        recovered = deserialize_image(serialize_image(img))
+        assert recovered.mode == "RGBA"
+
+    def test_rgb_roundtrip_does_not_gain_alpha(self):
+        img = _make_png_image()
+        recovered = deserialize_image(serialize_image(img))
+        assert recovered.mode == "RGB"
 
     def test_deserialize_invalid_base64_raises(self):
         with pytest.raises(Exception):

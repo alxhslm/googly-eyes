@@ -28,6 +28,12 @@ class TestGetImage:
         with pytest.raises(ValueError):
             get_image(12345)  # type: ignore[arg-type]
 
+    def test_rgba_stripped_to_rgb(self):
+        img = np.full((50, 60, 4), fill_value=128, dtype=np.uint8)
+        result = get_image(img)
+        assert result.shape[2] == 3
+        np.testing.assert_array_equal(result, img[:, :, :3])
+
 
 class TestResizeImage:
     def test_output_is_target_size(self):
