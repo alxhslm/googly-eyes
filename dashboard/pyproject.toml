@@ -9,8 +9,8 @@ name = "PyPI"
 priority = "primary"
 
 [tool.poetry.dependencies]
-python = "~3.11"
-numpy  = "1.23.5"
+python = "~3.12"
+numpy  = "~1.26"
 streamlit = "1.54.0"
 pillow = "~12"
 requests = "^2.33.0"
